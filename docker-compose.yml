@@ -1,0 +1,47 @@
+  services:
+    db:
+      image: mysql:8
+      container_name: workshop_db
+      restart: always
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: workshopdb
+        MYSQL_USER: workshop_user
+        MYSQL_PASSWORD: workshop_pass
+      ports:
+        - "3306:3306"
+      volumes:
+        - mysql_data:/var/lib/mysql
+      healthcheck:
+        test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+        timeout: 20s
+        retries: 10
+
+    server:
+      build:
+        context: ./server
+        dockerfile: Dockerfile
+      container_name: workshop_backend
+      restart: always
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ConnectionStrings__DefaultConnection=Server=db;Database=workshopdb;User=workshop_user;Password=workshop_pass;
+      ports:
+        - "5000:5000"
+      depends_on:
+        db:
+          condition: service_healthy
+
+    client:
+      build:
+        context: ./client
+        dockerfile: Dockerfile
+      container_name: workshop_frontend
+      restart: always
+      ports:
+        - "3000:80"
+      depends_on:
+        - server
+
+  volumes:
+    mysql_data:

@@ -1,0 +1,15 @@
+# .NET
+server/bin/
+server/obj/
+*.user
+
+# Node
+client/node_modules/
+client/dist/
+
+# Env
+.env
+.env.local
+
+# Docker
+*.env
