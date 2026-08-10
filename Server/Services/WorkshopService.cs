@@ -36,6 +36,52 @@ public class WorkshopService : IWorkshopService
         var result = workshops.Select(MapToDto);
         return ApplyParticipantRangeFilter(result, filter);
     }
+    
+    public async Task<WorkshopDto> CreateAsync(WorkshopDto dto)
+    {
+        var workshop = new Workshops 
+        {
+            Name = dto.Name,
+            Date = dto.Date,
+            Description = dto.Description
+        };
+
+        _context.Workshops.Add(workshop);
+        await _context.SaveChangesAsync();
+
+        dto.Id = workshop.Id;
+        return dto;
+    }
+
+    public async Task<bool> AssignContributorsAsync(int workshopId, List<int> contributorIds)
+    {
+        var workshop = await _context.Workshops
+            .Include(w => w.ContributorWorkshops)
+            .FirstOrDefaultAsync(w => w.Id == workshopId);
+
+        if (workshop is null) return false;
+
+        var existingIds = workshop.ContributorWorkshops
+            .Select(cw => cw.ContributorId)
+            .ToHashSet();
+
+        var idsToAdd = contributorIds.Except(existingIds);
+
+        foreach (var contributorId in idsToAdd)
+        {
+            var contributorExists = await _context.Contributors.AnyAsync(c => c.Id == contributorId);
+            if (!contributorExists) continue;
+
+            workshop.ContributorWorkshops.Add(new ContributorWorkshop
+            {
+                WorkshopId = workshopId,
+                ContributorId = contributorId
+            });
+        }
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
 
     private async Task<Workshops?> LoadWorkshopWithContributorsAsync(int id)
     {
