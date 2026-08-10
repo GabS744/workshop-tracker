@@ -8,6 +8,5 @@ public interface IWorkshopService
     Task<WorkshopDto?> GetByIdAsync(int id);
     Task<IEnumerable<WorkshopDto>> SearchAsync(WorkshopFilterDto filter);
 
-    Task<WorkshopDto> CreateAsync(WorkshopDto dto);
-    Task<bool> AssignContributorsAsync(int workshopId, List<int> contributorId);
+    Task<WorkshopDto> CreateAsync(CreateWorkshopDto dto);
 }

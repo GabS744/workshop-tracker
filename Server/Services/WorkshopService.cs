@@ -53,35 +53,7 @@ public class WorkshopService : IWorkshopService
         return dto;
     }
 
-    public async Task<bool> AssignContributorsAsync(int workshopId, List<int> contributorIds)
-    {
-        var workshop = await _context.Workshops
-            .Include(w => w.ContributorWorkshops)
-            .FirstOrDefaultAsync(w => w.Id == workshopId);
 
-        if (workshop is null) return false;
-
-        var existingIds = workshop.ContributorWorkshops
-            .Select(cw => cw.ContributorId)
-            .ToHashSet();
-
-        var idsToAdd = contributorIds.Except(existingIds);
-
-        foreach (var contributorId in idsToAdd)
-        {
-            var contributorExists = await _context.Contributors.AnyAsync(c => c.Id == contributorId);
-            if (!contributorExists) continue;
-
-            workshop.ContributorWorkshops.Add(new ContributorWorkshop
-            {
-                WorkshopId = workshopId,
-                ContributorId = contributorId
-            });
-        }
-
-        await _context.SaveChangesAsync();
-        return true;
-    }
 
     private async Task<Workshops?> LoadWorkshopWithContributorsAsync(int id)
     {
@@ -136,4 +108,32 @@ public class WorkshopService : IWorkshopService
             TotalParticipants = w.ContributorWorkshops.Count
         };
     }
+    public async Task<WorkshopDto> CreateAsync(CreateWorkshopDto dto)
+    {
+        var workshop = new Workshops 
+        {
+            Name = dto.Name,
+            Date = dto.Date,
+            Description = dto.Description,
+            ContributorWorkshops = new List<ContributorWorkshop>() 
+        };
+
+        var validContributors = await _context.Contributors
+            .Where(c => dto.ContributorIds.Contains(c.Id))
+            .Select(c => c.Id)
+            .ToListAsync();
+
+        foreach (var contributorId in validContributors)
+        {
+            workshop.ContributorWorkshops.Add(new ContributorWorkshop
+            {
+                ContributorId = contributorId
+            });
+        }
+
+        _context.Workshops.Add(workshop);
+        await _context.SaveChangesAsync();
+
+        return (await GetByIdAsync(workshop.Id))!;
+    }   
 }
