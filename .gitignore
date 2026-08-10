@@ -1,11 +1,13 @@
 # .NET
-server/bin/
-server/obj/
+Server/bin/
+Server/obj/
+Server/appsettings.json
+Server/appsettings.Development.json
 *.user
 
 # Node
-client/node_modules/
-client/dist/
+Client/node_modules/
+Client/dist/
 
 # Env
 .env
