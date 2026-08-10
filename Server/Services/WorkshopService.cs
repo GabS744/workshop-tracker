@@ -135,5 +135,52 @@ public class WorkshopService : IWorkshopService
         await _context.SaveChangesAsync();
 
         return (await GetByIdAsync(workshop.Id))!;
+    }
+    public async Task<WorkshopDto?> UpdateAsync(int id, UpdateWorkshopDto dto)
+    {
+
+        var workshop = await _context.Workshops
+            .Include(w => w.ContributorWorkshops)
+            .FirstOrDefaultAsync(w => w.Id == id);
+
+        if (workshop is null) return null;
+
+        workshop.Name = dto.Name;
+        workshop.Date = dto.Date;
+        workshop.Description = dto.Description;
+
+        var itemsToRemove = workshop.ContributorWorkshops
+            .Where(cw => !dto.ContributorIds.Contains(cw.ContributorId))
+            .ToList();
+
+        // Remove um por um da coleção
+        foreach (var item in itemsToRemove)
+        {
+            workshop.ContributorWorkshops.Remove(item);
+        }
+
+        var existingIds = workshop.ContributorWorkshops.Select(cw => cw.ContributorId).ToHashSet();
+
+        var newIds = dto.ContributorIds.Except(existingIds).ToList();
+
+        if (newIds.Any())
+        {
+            var validNewIds = await _context.Contributors
+                .Where(c => newIds.Contains(c.Id))
+                .Select(c => c.Id)
+                .ToListAsync();
+
+            foreach (var contributorId in validNewIds)
+            {
+                workshop.ContributorWorkshops.Add(new ContributorWorkshop
+                {
+                    ContributorId = contributorId
+                });
+            }
+        }
+
+        await _context.SaveChangesAsync();
+
+        return await GetByIdAsync(id);
     }   
 }

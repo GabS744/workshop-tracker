@@ -41,11 +41,24 @@ public class WorkshopsController : ControllerBase
         var workshops = await _workshopService.SearchAsync(filter);
         return Ok(workshops);
     }
-    
+
     [HttpPost]
     public async Task<ActionResult<WorkshopDto>> Create(CreateWorkshopDto dto)
     {
         var createdWorkshop = await _workshopService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = createdWorkshop.Id }, createdWorkshop);
+    }
+    
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<WorkshopDto>> Update(int id, UpdateWorkshopDto dto)
+    {
+        var updatedWorkshop = await _workshopService.UpdateAsync(id, dto);
+        
+        if (updatedWorkshop is null)
+        {
+            return NotFound("Workshop não encontrado.");
+        }
+
+        return Ok(updatedWorkshop);
     }
 }
