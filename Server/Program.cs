@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using FlowUp.Api.Data;
+using FlowUp.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +12,12 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<IWorkshopService, WorkshopService>();
+
 var app = builder.Build();
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -40,6 +46,8 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+app.MapControllers();
 
 app.Run();
 
