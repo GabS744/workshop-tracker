@@ -9,4 +9,5 @@ public interface IWorkshopService
     Task<IEnumerable<WorkshopDto>> SearchAsync(WorkshopFilterDto filter);
     Task<WorkshopDto> CreateAsync(CreateWorkshopDto dto);
     Task<WorkshopDto?> UpdateAsync(int id, UpdateWorkshopDto dto);
+    Task<bool> DeleteAsync(int id);
 }

@@ -182,5 +182,17 @@ public class WorkshopService : IWorkshopService
         await _context.SaveChangesAsync();
 
         return await GetByIdAsync(id);
+    }
+    public async Task<bool> DeleteAsync(int id)
+    {
+
+        var workshop = await _context.Workshops.FindAsync(id);
+
+        if (workshop is null) return false;
+
+        _context.Workshops.Remove(workshop);
+        await _context.SaveChangesAsync();
+
+        return true;
     }   
 }

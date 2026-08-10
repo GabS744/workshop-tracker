@@ -48,7 +48,7 @@ public class WorkshopsController : ControllerBase
         var createdWorkshop = await _workshopService.CreateAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = createdWorkshop.Id }, createdWorkshop);
     }
-    
+
     [HttpPut("{id:int}")]
     public async Task<ActionResult<WorkshopDto>> Update(int id, UpdateWorkshopDto dto)
     {
@@ -60,5 +60,18 @@ public class WorkshopsController : ControllerBase
         }
 
         return Ok(updatedWorkshop);
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var success = await _workshopService.DeleteAsync(id);
+        
+        if (!success)
+        {
+            return NotFound("Workshop não encontrado.");
+        }
+        
+        return NoContent(); 
     }
 }
