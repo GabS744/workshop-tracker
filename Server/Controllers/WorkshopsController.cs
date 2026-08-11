@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using FlowUp.Api.DTOs;
 using FlowUp.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlowUp.Api.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/workshops")]
 public class WorkshopsController : ControllerBase
@@ -42,6 +43,7 @@ public class WorkshopsController : ControllerBase
         return Ok(workshops);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<ActionResult<WorkshopDto>> Create(CreateWorkshopDto dto)
     {
@@ -49,6 +51,7 @@ public class WorkshopsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = createdWorkshop.Id }, createdWorkshop);
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id:int}")]
     public async Task<ActionResult<WorkshopDto>> Update(int id, UpdateWorkshopDto dto)
     {
@@ -61,7 +64,8 @@ public class WorkshopsController : ControllerBase
 
         return Ok(updatedWorkshop);
     }
-
+    
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:int}")]
     public async Task<ActionResult> Delete(int id)
     {

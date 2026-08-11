@@ -7,11 +7,11 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-// Table definitions for the database context
     public DbSet<Contributors> Contributors => Set<Contributors>();
     public DbSet<Workshops> Workshops => Set<Workshops>();
     public DbSet<ContributorWorkshop> ContributorWorkshops => Set<ContributorWorkshop>();
-
+    public DbSet<User> Users { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
 
