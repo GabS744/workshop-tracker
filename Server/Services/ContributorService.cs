@@ -78,4 +78,46 @@ public class ContributorService : IContributorService
             FullName = c.FirstName + " " + c.LastName
         }).ToList();
     }
+    public async Task<IEnumerable<ContributorDto>> GetAllAsync()
+    {
+        var contributors = await _context.Contributors
+            .Include(c => c.ContributorWorkshops)
+            .ToListAsync();
+
+        return contributors.Select(c => new ContributorDto
+        {
+            Id = c.Id,
+            FirstName = c.FirstName,
+            LastName = c.LastName,
+            FullName = c.FirstName + " " + c.LastName,
+
+            TotalWorkshops = c.ContributorWorkshops.Count 
+        }).ToList();
+    }
+
+    public async Task<IEnumerable<WorkshopDto>> GetWorkshopsByContributorIdAsync(int contributorId)
+    {
+
+        var workshops = await _context.Workshops
+            .Include(w => w.ContributorWorkshops)
+                .ThenInclude(cw => cw.Contributor)
+            .Where(w => w.ContributorWorkshops.Any(cw => cw.ContributorId == contributorId))
+            .ToListAsync();
+
+        return workshops.Select(w => new WorkshopDto
+        {
+            Id = w.Id,
+            Name = w.Name,
+            Date = w.Date,
+            Description = w.Description,
+            TotalParticipants = w.ContributorWorkshops.Count,
+            Contributors = w.ContributorWorkshops.Select(cw => new ContributorDto
+            {
+                Id = cw.Contributor.Id,
+                FirstName = cw.Contributor.FirstName,
+                LastName = cw.Contributor.LastName,
+                FullName = cw.Contributor.FirstName + " " + cw.Contributor.LastName
+            }).ToList()
+        }).ToList();
+    }
 }

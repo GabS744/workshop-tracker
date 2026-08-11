@@ -41,4 +41,17 @@ public class ContributorsController : ControllerBase
         
         return Ok(contributors);
     }
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<ContributorDto>>> GetAll()
+    {
+        var contributors = await _contributorService.GetAllAsync();
+        return Ok(contributors);
+    }
+
+    [HttpGet("{id:int}/workshops")]
+    public async Task<ActionResult<IEnumerable<WorkshopDto>>> GetWorkshops(int id)
+    {
+        var workshops = await _contributorService.GetWorkshopsByContributorIdAsync(id);
+        return Ok(workshops);
+    }
 }
