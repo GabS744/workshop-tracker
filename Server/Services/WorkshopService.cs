@@ -103,7 +103,7 @@ public class WorkshopService : IWorkshopService
             Date = w.Date,
             Description = w.Description,
             Contributors = w.ContributorWorkshops
-                .Select(cw => new ContributorDto { Id = cw.Contributor.Id, Name = cw.Contributor.FirstName })
+                .Select(cw => new ContributorDto { Id = cw.Contributor.Id, FirstName = cw.Contributor.FirstName, LastName =cw.Contributor.LastName,FullName = cw.Contributor.FirstName + " " + cw.Contributor.LastName })
                 .ToList(),
             TotalParticipants = w.ContributorWorkshops.Count
         };
