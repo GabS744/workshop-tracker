@@ -6,7 +6,7 @@ export function Navbar() {
 
   const navItems = [
     { name: 'Dashboard', path: '/' },
-    { name: 'Colaboradores', path: '/colaboradores' },
+    { name: 'Colaboradores', path: '/contributors' },
     { name: 'Workshops', path: '/workshops' },
   ];
 
