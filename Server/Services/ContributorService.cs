@@ -120,4 +120,16 @@ public class ContributorService : IContributorService
             }).ToList()
         }).ToList();
     }
+    public async Task<bool> DeleteAsync(int id)
+    {
+
+        var contributor = await _context.Contributors.FindAsync(id);
+
+        if (contributor is null) return false;
+
+        _context.Contributors.Remove(contributor);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
 }

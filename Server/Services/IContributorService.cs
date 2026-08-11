@@ -9,4 +9,5 @@ public interface IContributorService
     Task<IEnumerable<ContributorDto>> SearchByNameAsync(string name);
     Task<IEnumerable<ContributorDto>> GetAllAsync();
     Task<IEnumerable<WorkshopDto>> GetWorkshopsByContributorIdAsync(int contributorId);
+    Task<bool> DeleteAsync(int id);
 }

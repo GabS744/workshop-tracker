@@ -54,4 +54,16 @@ public class ContributorsController : ControllerBase
         var workshops = await _contributorService.GetWorkshopsByContributorIdAsync(id);
         return Ok(workshops);
     }
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        var success = await _contributorService.DeleteAsync(id);
+        
+        if (!success)
+        {
+            return NotFound("Colaborador não encontrado.");
+        }
+
+        return NoContent(); 
+    }
 }
