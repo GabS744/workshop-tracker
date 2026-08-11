@@ -1,6 +1,7 @@
 using FlowUp.Api.Data;
 using FlowUp.Api.Models;
 using FlowUp.Api.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlowUp.Api.Services;
 
@@ -52,5 +53,29 @@ public class ContributorService : IContributorService
             LastName = contributor.LastName,
             FullName = contributor.FirstName + " " + contributor.LastName
         };
+    }
+    public async Task<IEnumerable<ContributorDto>> SearchByNameAsync(string name)
+    {
+        
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return new List<ContributorDto>();
+        }
+
+        var contributors = await _context.Contributors
+            .Where(c => 
+                c.FirstName.Contains(name) || 
+                c.LastName.Contains(name) || 
+                (c.FirstName + " " + c.LastName).Contains(name)
+            )
+            .ToListAsync();
+
+        return contributors.Select(c => new ContributorDto
+        {
+            Id = c.Id,
+            FirstName = c.FirstName,
+            LastName = c.LastName,
+            FullName = c.FirstName + " " + c.LastName
+        }).ToList();
     }
 }

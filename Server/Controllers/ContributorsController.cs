@@ -34,4 +34,11 @@ public class ContributorsController : ControllerBase
 
         return Ok(updatedContributor);
     }
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<ContributorDto>>> Search([FromQuery] string name)
+    {
+        var contributors = await _contributorService.SearchByNameAsync(name);
+        
+        return Ok(contributors);
+    }
 }
