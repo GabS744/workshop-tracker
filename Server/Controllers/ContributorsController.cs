@@ -22,4 +22,16 @@ public class ContributorsController : ControllerBase
 
         return Created($"/api/contributors/{createdContributor.Id}", createdContributor);
     }
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<ContributorDto>> Update(int id, UpdateContributorDto dto)
+    {
+        var updatedContributor = await _contributorService.UpdateAsync(id, dto);
+        
+        if (updatedContributor is null)
+        {
+            return NotFound("Colaborador não encontrado.");
+        }
+
+        return Ok(updatedContributor);
+    }
 }
