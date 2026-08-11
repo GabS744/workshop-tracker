@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using FlowUp.Api.DTOs;
 using FlowUp.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FlowUp.Api.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/contributors")]
 public class ContributorsController : ControllerBase
