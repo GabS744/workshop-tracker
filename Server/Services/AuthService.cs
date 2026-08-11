@@ -63,7 +63,8 @@ public class AuthService : IAuthService
             Subject = new ClaimsIdentity(new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             }),
 
             Expires = DateTime.UtcNow.AddHours(8),
@@ -76,5 +77,63 @@ public class AuthService : IAuthService
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task<bool> DeleteUserAsync(int id)
+    {
+
+        var user = await _context.Users.FindAsync(id);
+
+        if (user is null) return false;
+
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+    public async Task<bool> GrantAdminAsync(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user is null) return false;
+
+        user.Role = "Admin";
+        await _context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UpdateCredentialsAsync(int userId, UpdateCredentialsDto dto)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user is null) return false;
+
+        if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash))
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.NewEmail) && dto.NewEmail != user.Email)
+        {
+
+            if (await _context.Users.AnyAsync(u => u.Email == dto.NewEmail)) return false;
+            
+            user.Email = dto.NewEmail;
+        }
+
+        if (!string.IsNullOrWhiteSpace(dto.NewPassword))
+        {
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+        }
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    public async Task<bool> RevokeAdminAsync(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user is null) return false;
+
+        user.Role = "User";
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
