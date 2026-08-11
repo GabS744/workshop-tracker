@@ -16,6 +16,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IWorkshopService, WorkshopService>();
 
+builder.Services.AddScoped<IContributorService, ContributorService>();
+
 var app = builder.Build();
 
 
