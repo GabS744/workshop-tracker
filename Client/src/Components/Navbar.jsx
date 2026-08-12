@@ -4,7 +4,7 @@ export function Navbar() {
   const location = useLocation();
 
   const navItems = [
-    { name: "Dashboard", path: "/" },
+    { name: "Dashboard", path: "/dashboard" },
     { name: "Colaboradores", path: "/colaboradores" },
     { name: "Workshops", path: "/workshops" },
   ];

@@ -5,7 +5,7 @@ import { ContributorModal } from "../Components/ContributorModal";
 import { ConfirmDeleteModal } from "../Components/ConfirmDeleteModal";
 import { ContributorDetailsModal } from "../Components/ContributorDetailsModal";
 
-export function ContributorPage() {
+export function ContributorsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [EditContributor, setEditContributor] = useState(null);
   const [ViewContributor, setViewContributor] = useState(null);
