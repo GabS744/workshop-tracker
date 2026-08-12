@@ -5,6 +5,9 @@ import { useState } from "react";
 export function ListView({
   variant,
   data,
+  searchValue = "",
+  onSearchChange,
+  searchLoading = false,
   onAddClick,
   onEditClick,
   onDeleteClick,
@@ -45,6 +48,8 @@ export function ListView({
           <input
             type="text"
             placeholder={searchPlaceholder}
+            value={searchValue}
+            onChange={(e) => onSearchChange?.(e.target.value)}
             className="w-full bg-[#161c2a] border border-[#252f45] text-white text-sm rounded-lg focus:ring-[#4d8aff] focus:border-[#4d8aff] block pl-10 p-2.5 outline-none transition-colors"
           />
         </div>
@@ -63,6 +68,12 @@ export function ListView({
           </button>
         )}
       </div>
+
+      {isContributors && searchLoading && (
+        <p className="text-[#7a88a4] text-xs mb-4">
+          Pesquisando colaboradores...
+        </p>
+      )}
 
       {!isContributors && showFilters && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 animate-in fade-in slide-in-from-top-2 duration-200">

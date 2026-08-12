@@ -29,7 +29,7 @@ export function LoginPage() {
 
         localStorage.setItem("@WorkshopTracker:token", token);
 
-        navigate("/");
+        navigate("/dashboard");
       } else {
         if (password !== confirmPassword) {
           setError("As senhas não coincidem!");
