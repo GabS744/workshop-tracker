@@ -1,13 +1,20 @@
 import { Search, Filter, Eye, Edit, Trash2 } from "lucide-react";
 import { PrimaryButton } from "./PrimaryButton";
 
-export function ListView({ variant, data, onAddClick }) {
-  const isColaboradores = variant === "colaboradores";
+export function ListView({
+  variant,
+  data,
+  onAddClick,
+  onEditClick,
+  onDeleteClick,
+  onViewClick,
+}) {
+  const isContributors = variant === "Contributors";
 
-  const title = isColaboradores ? "Colaboradores" : "Workshops";
+  const title = isContributors ? "Colaboradores" : "Workshops";
   const subtitle = `${data.length} cadastrados`;
-  const buttonText = isColaboradores ? "Novo Colaborador" : "Novo Workshop";
-  const searchPlaceholder = isColaboradores
+  const buttonText = isContributors ? "Novo Colaborador" : "Novo Workshop";
+  const searchPlaceholder = isContributors
     ? "Pesquisar colaborador..."
     : "Pesquisar workshop...";
 
@@ -33,7 +40,7 @@ export function ListView({ variant, data, onAddClick }) {
           />
         </div>
 
-        {!isColaboradores && (
+        {!isContributors && (
           <button className="flex items-center gap-2 bg-[#161c2a] border border-[#252f45] hover:bg-[#1a2540] text-[#7a88a4] hover:text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-colors">
             <Filter size={16} />
             Filtros
@@ -53,7 +60,7 @@ export function ListView({ variant, data, onAddClick }) {
                   Nome
                 </th>
 
-                {isColaboradores ? (
+                {isContributors ? (
                   <th className="py-4 px-6 text-[#7a88a4] text-xs font-semibold uppercase w-37.5">
                     Workshops
                   </th>
@@ -89,12 +96,12 @@ export function ListView({ variant, data, onAddClick }) {
                   </td>
 
                   <td
-                    className={`py-4 px-6 text-sm font-medium ${isColaboradores ? "text-white" : "text-[#4d8aff]"}`}
+                    className={`py-4 px-6 text-sm font-medium ${isContributors ? "text-white" : "text-[#4d8aff]"}`}
                   >
                     {item.nome}
                   </td>
 
-                  {isColaboradores ? (
+                  {isContributors ? (
                     <td className="py-4 px-6">
                       <span className="bg-[#1a2540] text-[#4d8aff] text-xs font-medium px-3 py-1 rounded-full">
                         {item.workshops} workshops
@@ -118,16 +125,25 @@ export function ListView({ variant, data, onAddClick }) {
 
                   <td className="py-4 px-6">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="flex items-center gap-1.5 bg-[#1a2540] hover:bg-[#d4e0ff] text-[#4d8aff] hover:text-[#1a2540] px-2.5 py-1.5 rounded-lg transition-colors text-xs font-semibold">
+                      <button
+                        onClick={() => onViewClick(item)}
+                        className="flex items-center gap-1.5 bg-[#1a2540] hover:bg-[#d4e0ff] text-[#4d8aff] hover:text-[#1a2540] px-2.5 py-1.5 rounded-lg transition-colors text-xs font-semibold"
+                      >
                         <Eye size={16} strokeWidth={2} />
-                        {isColaboradores && "Detalhes"}
+                        {isContributors && "Detalhes"}
                       </button>
 
-                      <button className="bg-transparent border border-[#252f45] hover:border-[#4d8aff] text-[#7a88a4] hover:text-[#4d8aff] p-1.5 rounded-lg transition-colors">
+                      <button
+                        onClick={() => onEditClick(item)}
+                        className="bg-transparent border border-[#252f45] hover:border-[#4d8aff] text-[#7a88a4] hover:text-[#4d8aff] p-1.5 rounded-lg transition-colors"
+                      >
                         <Edit size={16} strokeWidth={2} />
                       </button>
 
-                      <button className="bg-transparent border border-[#252f45] hover:border-[#ef4444] hover:bg-[#ef4444]/10 text-[#ef4444] p-1.5 rounded-lg transition-colors">
+                      <button
+                        onClick={() => onDeleteClick(item)}
+                        className="bg-transparent border border-[#252f45] hover:border-[#ef4444] hover:bg-[#ef4444]/10 text-[#ef4444] p-1.5 rounded-lg transition-colors"
+                      >
                         <Trash2 size={16} strokeWidth={2} />
                       </button>
                     </div>

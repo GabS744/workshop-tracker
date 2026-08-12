@@ -1,32 +1,32 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 
-export function ColaboradorModal({
+export function ContributorModal({
   isOpen,
   onClose,
   onSave,
-  colaborador = null,
+  contributor = null,
 }) {
   if (!isOpen) return null;
 
   return (
-    <ColaboradorModalContent
-      key={`${colaborador?.id ?? "novo"}-${isOpen}`}
+    <ContributorModalContent
+      key={`${contributor?.id ?? "novo"}-${isOpen}`}
       onClose={onClose}
       onSave={onSave}
-      colaborador={colaborador}
+      contributor={contributor}
     />
   );
 }
 
-function ColaboradorModalContent({
+function ContributorModalContent({
   onClose,
   onSave,
-  colaborador,
+  contributor,
 }) {
-  const [nome, setNome] = useState(colaborador?.nome ?? "");
+  const [nome, setNome] = useState(contributor?.nome ?? "");
 
-  const isEditing = !!colaborador;
+  const isEditing = !!contributor;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,7 +34,7 @@ function ColaboradorModalContent({
     if (!nome.trim()) return;
 
     onSave({
-      id: isEditing ? colaborador.id : undefined,
+      id: isEditing ? contributor.id : undefined,
       nome: nome.trim(),
     });
   };
@@ -45,7 +45,7 @@ function ColaboradorModalContent({
         
         <div className="flex items-center justify-between p-5 border-b border-[#252f45]">
           <h2 className="text-white text-lg font-bold">
-            {isEditing ? "Editar Colaborador" : "Novo Colaborador"}
+            {isEditing ? "Editar colaborador" : "Novo colaborador"}
           </h2>
 
           <button
