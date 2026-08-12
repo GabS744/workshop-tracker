@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock } from "lucide-react";
-import { AuthInput } from "../Components/AuthInput"; // 👈 Importamos o novo input
+import { AuthInput } from "../Components/AuthInput";
+import { api } from "../Services/Api";
 
 export function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,20 +11,46 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isLogin) {
-      console.log("Login:", { email, password });
-      navigate("/");
-    } else {
-      if (password !== confirmPassword) {
-        alert("As senhas não coincidem!");
-        return;
+    setError("");
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        const response = await api.post("/api/auth/login", { email, password });
+
+        const token = response.data.token;
+
+        localStorage.setItem("@WorkshopTracker:token", token);
+
+        navigate("/");
+      } else {
+        if (password !== confirmPassword) {
+          setError("As senhas não coincidem!");
+          setLoading(false);
+          return;
+        }
+
+        await api.post("/api/auth/register", { email, password });
+
+        setIsLogin(true);
+        setPassword("");
+        setConfirmPassword("");
       }
-      console.log("Cadastro:", { email, password });
-      navigate("/");
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message ||
+          "Ocorreu um erro. Verifique seus dados e tente novamente.",
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,14 +78,20 @@ export function LoginPage() {
         <div className="flex bg-[#1a2540] p-1 rounded-lg mb-8 border border-[#252f45]">
           <button
             type="button"
-            onClick={() => setIsLogin(true)}
+            onClick={() => {
+              setIsLogin(true);
+              setError("");
+            }}
             className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-300 ${isLogin ? "bg-linear-to-r from-[#5c6dff] to-[#a35cff] text-white shadow-md" : "text-[#7a88a4] hover:text-white"}`}
           >
             Entrar
           </button>
           <button
             type="button"
-            onClick={() => setIsLogin(false)}
+            onClick={() => {
+              setIsLogin(false);
+              setError("");
+            }}
             className={`flex-1 py-2 text-sm font-semibold rounded-md transition-all duration-300 ${!isLogin ? "bg-linear-to-r from-[#5c6dff] to-[#a35cff] text-white shadow-md" : "text-[#7a88a4] hover:text-white"}`}
           >
             Cadastrar
@@ -115,11 +148,18 @@ export function LoginPage() {
             </div>
           )}
 
+          {error && (
+            <div className="bg-[#ef4444]/10 border border-[#ef4444]/50 text-[#ef4444] text-xs font-medium p-3 rounded-lg text-center animate-in fade-in">
+              {error}
+            </div>
+          )}
+
           <button
             type="submit"
-            className="w-full bg-linear-to-r from-[#5c6dff] to-[#a35cff] hover:from-[#4a5ce8] hover:to-[#8c46f2] text-white text-sm font-bold py-3 rounded-lg shadow-lg shadow-[#5c6dff]/25 transition-all mt-2"
+            disabled={loading}
+            className={`w-full bg-linear-to-r from-[#5c6dff] to-[#a35cff] hover:from-[#4a5ce8] hover:to-[#8c46f2] text-white text-sm font-bold py-3 rounded-lg shadow-lg shadow-[#5c6dff]/25 transition-all mt-2 ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
           >
-            {isLogin ? "Entrar" : "Criar conta"}
+            {loading ? "Carregando..." : isLogin ? "Entrar" : "Criar conta"}
           </button>
         </form>
 

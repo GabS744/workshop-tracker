@@ -74,7 +74,19 @@ builder.Services.AddScoped<IWorkshopService, WorkshopService>();
 builder.Services.AddScoped<IContributorService, ContributorService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirFrontendReact", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173") // 👈 O endereço do seu React!
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors("PermitirFrontendReact");
 
 if (app.Environment.IsDevelopment())
 {
