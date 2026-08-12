@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ListView } from "../Components/ListView";
 import { ContributorModal } from "../Components/ContributorModal";
 import { ConfirmDeleteModal } from "../Components/ConfirmDeleteModal";
-import { ContributorDetailsModal } from "../Components/CoontributorDetailsModal";
+import { ContributorDetailsModal } from "../Components/ContributorDetailsModal";
 
 export function ContributorPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
