@@ -26,6 +26,8 @@ npm --version
 
 ### 1. Backend
 
+Troque o nome do appsettings.example.json para appsettings.json
+
 ```bash
 cd Server
 dotnet run
