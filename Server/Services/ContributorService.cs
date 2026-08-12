@@ -30,13 +30,13 @@ public class ContributorService : IContributorService
             Id = contributor.Id,
             FirstName = contributor.FirstName,
             LastName = contributor.LastName,
-            FullName = contributor.FirstName + " " + contributor.LastName
+            FullName = contributor.FirstName + " " + contributor.LastName,
+            TotalWorkshops = 0
         };
     }
 
     public async Task<ContributorDto?> UpdateAsync(int id, UpdateContributorDto dto)
     {
-
         var contributor = await _context.Contributors.FindAsync(id);
 
         if (contributor is null) return null;
@@ -51,21 +51,34 @@ public class ContributorService : IContributorService
             Id = contributor.Id,
             FirstName = contributor.FirstName,
             LastName = contributor.LastName,
-            FullName = contributor.FirstName + " " + contributor.LastName
+            FullName = contributor.FirstName + " " + contributor.LastName,
+            TotalWorkshops = await GetTotalWorkshopsAsync(contributor.Id)
         };
     }
+
     public async Task<IEnumerable<ContributorDto>> SearchByNameAsync(string name)
     {
-        
         if (string.IsNullOrWhiteSpace(name))
         {
             return new List<ContributorDto>();
         }
 
+        var workshopTotals = await _context.ContributorWorkshops
+            .Where(cw => cw.Contributor.FirstName.Contains(name) ||
+                         cw.Contributor.LastName.Contains(name) ||
+                         (cw.Contributor.FirstName + " " + cw.Contributor.LastName).Contains(name))
+            .GroupBy(cw => cw.ContributorId)
+            .Select(group => new
+            {
+                ContributorId = group.Key,
+                Total = group.Count()
+            })
+            .ToDictionaryAsync(item => item.ContributorId, item => item.Total);
+
         var contributors = await _context.Contributors
-            .Where(c => 
-                c.FirstName.Contains(name) || 
-                c.LastName.Contains(name) || 
+            .Where(c =>
+                c.FirstName.Contains(name) ||
+                c.LastName.Contains(name) ||
                 (c.FirstName + " " + c.LastName).Contains(name)
             )
             .ToListAsync();
@@ -75,13 +88,23 @@ public class ContributorService : IContributorService
             Id = c.Id,
             FirstName = c.FirstName,
             LastName = c.LastName,
-            FullName = c.FirstName + " " + c.LastName
+            FullName = c.FirstName + " " + c.LastName,
+            TotalWorkshops = workshopTotals.TryGetValue(c.Id, out var total) ? total : 0
         }).ToList();
     }
+
     public async Task<IEnumerable<ContributorDto>> GetAllAsync()
     {
+        var workshopTotals = await _context.ContributorWorkshops
+            .GroupBy(cw => cw.ContributorId)
+            .Select(group => new
+            {
+                ContributorId = group.Key,
+                Total = group.Count()
+            })
+            .ToDictionaryAsync(item => item.ContributorId, item => item.Total);
+
         var contributors = await _context.Contributors
-            .Include(c => c.ContributorWorkshops)
             .ToListAsync();
 
         return contributors.Select(c => new ContributorDto
@@ -90,14 +113,12 @@ public class ContributorService : IContributorService
             FirstName = c.FirstName,
             LastName = c.LastName,
             FullName = c.FirstName + " " + c.LastName,
-
-            TotalWorkshops = c.ContributorWorkshops.Count 
+            TotalWorkshops = workshopTotals.TryGetValue(c.Id, out var total) ? total : 0
         }).ToList();
     }
 
     public async Task<IEnumerable<WorkshopDto>> GetWorkshopsByContributorIdAsync(int contributorId)
     {
-
         var workshops = await _context.Workshops
             .Include(w => w.ContributorWorkshops)
                 .ThenInclude(cw => cw.Contributor)
@@ -120,9 +141,9 @@ public class ContributorService : IContributorService
             }).ToList()
         }).ToList();
     }
+
     public async Task<bool> DeleteAsync(int id)
     {
-
         var contributor = await _context.Contributors.FindAsync(id);
 
         if (contributor is null) return false;
@@ -131,5 +152,11 @@ public class ContributorService : IContributorService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+    private async Task<int> GetTotalWorkshopsAsync(int contributorId)
+    {
+        return await _context.ContributorWorkshops
+            .CountAsync(cw => cw.ContributorId == contributorId);
     }
 }
