@@ -16,24 +16,29 @@ public class WorkshopService : IWorkshopService
 
     public async Task<IEnumerable<WorkshopDto>> GetAllAsync()
     {
+        var participantTotals = await GetParticipantTotalsAsync();
         var workshops = await _context.Workshops
             .Include(w => w.ContributorWorkshops)
             .ThenInclude(cw => cw.Contributor)
             .ToListAsync();
 
-        return workshops.Select(MapToDto);
+        return workshops.Select(w => MapToDto(w, participantTotals.TryGetValue(w.Id, out var total) ? total : 0));
     }
 
     public async Task<WorkshopDto?> GetByIdAsync(int id)
     {
         var workshop = await LoadWorkshopWithContributorsAsync(id);
-        return workshop is null ? null : MapToDto(workshop);
+        if (workshop is null) return null;
+
+        var totalParticipants = await GetParticipantTotalAsync(workshop.Id);
+        return MapToDto(workshop, totalParticipants);
     }
 
     public async Task<IEnumerable<WorkshopDto>> SearchAsync(WorkshopFilterDto filter)
     {
+        var participantTotals = await GetParticipantTotalsAsync();
         var workshops = await BuildFilteredQuery(filter).ToListAsync();
-        var result = workshops.Select(MapToDto);
+        var result = workshops.Select(w => MapToDto(w, participantTotals.TryGetValue(w.Id, out var total) ? total : 0));
         return ApplyParticipantRangeFilter(result, filter);
     }
     
@@ -94,7 +99,7 @@ public class WorkshopService : IWorkshopService
         return workshops.ToList();
     }
 
-    private static WorkshopDto MapToDto(Workshops w)
+    private static WorkshopDto MapToDto(Workshops w, int totalParticipants)
     {
         return new WorkshopDto
         {
@@ -105,7 +110,7 @@ public class WorkshopService : IWorkshopService
             Contributors = w.ContributorWorkshops
                 .Select(cw => new ContributorDto { Id = cw.Contributor.Id, FirstName = cw.Contributor.FirstName, LastName =cw.Contributor.LastName,FullName = cw.Contributor.FirstName + " " + cw.Contributor.LastName })
                 .ToList(),
-            TotalParticipants = w.ContributorWorkshops.Count
+            TotalParticipants = totalParticipants
         };
     }
     public async Task<WorkshopDto> CreateAsync(CreateWorkshopDto dto)
@@ -183,6 +188,25 @@ public class WorkshopService : IWorkshopService
 
         return await GetByIdAsync(id);
     }
+
+    private async Task<Dictionary<int, int>> GetParticipantTotalsAsync()
+    {
+        return await _context.ContributorWorkshops
+            .GroupBy(cw => cw.WorkshopId)
+            .Select(group => new
+            {
+                WorkshopId = group.Key,
+                Total = group.Count()
+            })
+            .ToDictionaryAsync(item => item.WorkshopId, item => item.Total);
+    }
+
+    private async Task<int> GetParticipantTotalAsync(int workshopId)
+    {
+        return await _context.ContributorWorkshops
+            .CountAsync(cw => cw.WorkshopId == workshopId);
+    }
+
     public async Task<bool> DeleteAsync(int id)
     {
 
