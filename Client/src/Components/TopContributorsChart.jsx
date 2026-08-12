@@ -10,15 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
-export function TopContributorsChart() {
-  const data = [
-    { name: "Ana", workshops: 4 },
-    { name: "Fernanda", workshops: 4 },
-    { name: "Larissa", workshops: 4 },
-    { name: "Beatriz", workshops: 4 },
-    { name: "Carlos", workshops: 3 },
-  ];
-
+export function TopContributorsChart({ data = [] }) {
   return (
     <div className="group bg-[#161c2a] rounded-xl p-6 w-full h-87.5 flex flex-col font-['Inter'] shadow-sm transition-all duration-300">
       <div className="flex items-center justify-between mb-6 h-8">

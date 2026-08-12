@@ -2,15 +2,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
-export function WorkshopsDistributionChart() {
-  const data = [
-    { name: "Clean Code com C#", value: 6, percentage: 21 },
-    { name: "Introdução ao Docker", value: 5, percentage: 18 },
-    { name: "React 19 e Server Comp...", value: 5, percentage: 18 },
-    { name: "Segurança em APIs REST", value: 8, percentage: 29 },
-    { name: "Testes Automatizados c...", value: 4, percentage: 14 },
-  ];
-
+export function WorkshopsDistributionChart({ data = [], total = 0 }) {
   const COLORS = ["#5112e8", "#4045ff", "#6485ff", "#9caaff", "#3b12a8"];
 
   return (
@@ -60,7 +52,7 @@ export function WorkshopsDistributionChart() {
           </ResponsiveContainer>
           <div className="absolute flex flex-col items-center justify-center pointer-events-none">
             <span className="text-[#7a88a4] text-xs">Total</span>
-            <span className="text-white text-xl font-bold">28</span>
+            <span className="text-white text-xl font-bold">{total}</span>
           </div>
         </div>
 

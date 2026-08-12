@@ -29,11 +29,11 @@ function WorkshopModalContent({
 }) {
   const [nome, setNome] = useState(workshop?.nome ?? "");
   const [dataRealizacao, setDataRealizacao] = useState(
-    workshop?.data ?? ""
+    workshop?.dataInput ?? "",
   );
   const [descricao, setDescricao] = useState(workshop?.descricao ?? "");
   const [selecionados, setSelecionados] = useState(
-    workshop?.colaboradoresIds ?? []
+    workshop?.colaboradoresIds ?? [],
   );
 
   const isEditing = !!workshop;
@@ -42,7 +42,7 @@ function WorkshopModalContent({
     setSelecionados((prev) =>
       prev.includes(id)
         ? prev.filter((colabId) => colabId !== id)
-        : [...prev, id]
+        : [...prev, id],
     );
   };
 
@@ -65,7 +65,6 @@ function WorkshopModalContent({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
       <div className="bg-[#161c2a] w-full max-w-125 rounded-xl shadow-2xl border border-[#252f45] font-['Inter'] overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 max-h-[90vh]">
-
         <div className="flex items-center justify-between p-5 border-b border-[#252f45] shrink-0">
           <h2 className="text-white text-lg font-bold">
             {isEditing ? "Editar Workshop" : "Novo Workshop"}
@@ -79,12 +78,8 @@ function WorkshopModalContent({
           </button>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col overflow-y-auto"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col overflow-y-auto">
           <div className="p-5 flex flex-col gap-4">
-
             <div>
               <label className="block text-[#e2e8f4] text-sm font-medium mb-2">
                 Nome
@@ -147,14 +142,10 @@ function WorkshopModalContent({
                         className="w-4 h-4 rounded bg-transparent border-[#252f45] accent-[#5c6dff] cursor-pointer"
                       />
 
-                      <span className="text-white text-sm">
-                        {colab.nome}
-                      </span>
+                      <span className="text-white text-sm">{colab.nome}</span>
                     </div>
 
-                    <span className="text-[#7a88a4] text-xs">
-                      #{colab.id}
-                    </span>
+                    <span className="text-[#7a88a4] text-xs">#{colab.id}</span>
                   </label>
                 ))}
               </div>
@@ -162,7 +153,6 @@ function WorkshopModalContent({
           </div>
 
           <div className="p-5 pt-2 flex justify-end gap-3 shrink-0">
-
             <button
               type="button"
               onClick={onClose}
@@ -177,7 +167,6 @@ function WorkshopModalContent({
             >
               Salvar
             </button>
-
           </div>
         </form>
       </div>

@@ -22,7 +22,6 @@ public class AuthService : IAuthService
 
     public async Task<string?> RegisterAsync(UserRegisterDto dto)
     {
-        // 1. Verifica se o email já está em uso
         var userExists = await _context.Users.AnyAsync(u => u.Email == dto.Email);
         if (userExists) return null;
 

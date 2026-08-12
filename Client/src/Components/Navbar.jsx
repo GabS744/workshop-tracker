@@ -1,7 +1,39 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+function getAuthInfo() {
+  const token = localStorage.getItem("@WorkshopTracker:token");
+
+  if (!token) {
+    return { role: null };
+  }
+
+  try {
+    const payload = token.split(".")[1];
+    const normalizedPayload = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const paddedPayload = normalizedPayload.padEnd(
+      normalizedPayload.length + ((4 - (normalizedPayload.length % 4)) % 4),
+      "=",
+    );
+    const decodedPayload = JSON.parse(atob(paddedPayload));
+
+    const role =
+      decodedPayload.role ||
+      decodedPayload.Role ||
+      decodedPayload[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] ||
+      null;
+
+    return { role };
+  } catch {
+    return { role: null };
+  }
+}
 
 export function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const authInfo = getAuthInfo();
 
   const navItems = [
     { name: "Dashboard", path: "/dashboard" },
@@ -27,7 +59,7 @@ export function Navbar() {
         </span>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
 
@@ -45,6 +77,25 @@ export function Navbar() {
             </Link>
           );
         })}
+
+        <Link
+          to="/login"
+          className="px-3 py-2 rounded-md text-xs font-semibold tracking-wide uppercase border border-[#252f45] text-[#7a88a4] hover:text-white hover:bg-[#1a2540] transition-colors duration-200"
+          title="Ir para a tela de login"
+        >
+          {authInfo.role === "Admin" ? "Admin" : "User"}
+        </Link>
+
+        <button
+          type="button"
+          onClick={() => {
+            localStorage.removeItem("@WorkshopTracker:token");
+            navigate("/login");
+          }}
+          className="px-4 py-2 rounded-md text-sm font-medium bg-[#1a2540] text-[#e2e8f4] hover:bg-[#ef4444] hover:text-white transition-colors duration-200"
+        >
+          Sair
+        </button>
       </div>
     </nav>
   );
