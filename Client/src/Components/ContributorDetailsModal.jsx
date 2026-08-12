@@ -17,7 +17,6 @@ export function ContributorDetailsModal({ isOpen, onClose, contributor }) {
   const buscarWorkshops = async () => {
     try {
       setLoading(true);
-      // Chama a rota que estava na sua documentação do Swagger
       const response = await api.get(
         `/api/contributors/${contributor.id}/workshops`,
       );

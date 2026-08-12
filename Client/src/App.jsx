@@ -4,6 +4,7 @@ import { DefaultLayout } from "./Components/DefaultLayout";
 import { DashboardPage } from "./Pages/DashboardPage";
 import { ContributorsPage } from "./Pages/ContributorsPage";
 import { WorkshopsPage } from "./Pages/WorkshopsPage";
+import { WorkshopDetailsPage } from "./Pages/WorkshopDetailsPage";
 import { LoginPage } from "./Pages/LoginPage";
 
 function RequireAuth({ children }) {
@@ -53,6 +54,7 @@ export function App() {
           <Route path="colaboradores" element={<ContributorsPage />} />
 
           <Route path="workshops" element={<WorkshopsPage />} />
+          <Route path="workshops/:id" element={<WorkshopDetailsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

@@ -114,7 +114,9 @@ export function ListView({
               type="number"
               placeholder="Ex: 3"
               value={filterValues.minParticipantes ?? ""}
-              onChange={(e) => onFilterChange?.("minParticipantes", e.target.value)}
+              onChange={(e) =>
+                onFilterChange?.("minParticipantes", e.target.value)
+              }
               className="w-full bg-[#161c2a] border border-[#252f45] text-white text-sm rounded-lg focus:ring-1 focus:ring-[#5c6dff] focus:border-[#5c6dff] block p-2.5 outline-none transition-all placeholder-[#7a88a4]"
             />
           </div>
@@ -128,7 +130,9 @@ export function ListView({
               type="number"
               placeholder="Ex: 8"
               value={filterValues.maxParticipantes ?? ""}
-              onChange={(e) => onFilterChange?.("maxParticipantes", e.target.value)}
+              onChange={(e) =>
+                onFilterChange?.("maxParticipantes", e.target.value)
+              }
               className="w-full bg-[#161c2a] border border-[#252f45] text-white text-sm rounded-lg focus:ring-1 focus:ring-[#5c6dff] focus:border-[#5c6dff] block p-2.5 outline-none transition-all placeholder-[#7a88a4]"
             />
           </div>

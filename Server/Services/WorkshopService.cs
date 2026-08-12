@@ -158,7 +158,6 @@ public class WorkshopService : IWorkshopService
             .Where(cw => !dto.ContributorIds.Contains(cw.ContributorId))
             .ToList();
 
-        // Remove um por um da coleção
         foreach (var item in itemsToRemove)
         {
             workshop.ContributorWorkshops.Remove(item);

@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
 import { Users, Presentation, Percent } from "lucide-react";
 import { api } from "../Services/Api";
-
-// Importe os seus componentes (ajuste os caminhos se precisar)
 import { StatCard } from "../Components/StatCard";
 import { TopContributorsChart } from "../Components/TopContributorsChart";
 import { WorkshopsDistributionChart } from "../Components/WorkshopsDistributionChart";
+import { RecentWorkshopsTable } from "../Components/RecentWorkshopsTable";
 
 export function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
-  // Estados para armazenar os dados calculados
   const [stats, setStats] = useState({
     totalColaboradores: 0,
     totalWorkshops: 0,
@@ -18,13 +16,13 @@ export function DashboardPage() {
   });
   const [topContributors, setTopContributors] = useState([]);
   const [workshopDist, setWorkshopDist] = useState({ data: [], total: 0 });
+  const [recentWorkshops, setRecentWorkshops] = useState([]);
 
   useEffect(() => {
     async function carregarDashboard() {
       try {
         setLoading(true);
 
-        // Fazemos as duas requisições ao mesmo tempo
         const [colabRes, workRes] = await Promise.all([
           api.get("/api/contributors"),
           api.get("/api/workshops"),
@@ -33,7 +31,6 @@ export function DashboardPage() {
         const colaboradores = colabRes.data;
         const workshops = workRes.data;
 
-        // 1. CARDS DE ESTATÍSTICAS
         const totalParticipantesGeral = workshops.reduce(
           (acc, workshop) => acc + (workshop.totalParticipants || 0),
           0,
@@ -54,24 +51,18 @@ export function DashboardPage() {
           taxaMediaParticipacao,
         });
 
-        // 2. DADOS DO GRÁFICO DE BARRAS (Top 5 Colaboradores)
         const top5Colab = [...colaboradores]
-          // Ordena do maior número de workshops para o menor
           .sort((a, b) => (b.totalWorkshops || 0) - (a.totalWorkshops || 0))
-          .slice(0, 5) // Pega só os 5 primeiros
+          .slice(0, 5)
           .map((c) => ({
-            // Pega só o primeiro nome para não quebrar o gráfico
             name: c.fullName ? c.fullName.split(" ")[0] : c.firstName,
             workshops: c.totalWorkshops || 0,
           }));
 
         setTopContributors(top5Colab);
 
-        // 3. DADOS DO GRÁFICO DE PIZZA (Distribuição)
         let totalParticipantesGrafico = 0;
 
-        // Mapeia os workshops e calcula o total de participantes globais
-        // ATENÇÃO: Ajuste a propriedade 'participantesCount' para o nome correto que vem da sua API
         const formatandoWorkshops = workshops.map((w) => {
           const participantes = w.totalParticipants || 0;
           totalParticipantesGrafico += participantes;
@@ -81,7 +72,6 @@ export function DashboardPage() {
           };
         });
 
-        // Calcula a porcentagem e pega os 5 maiores para o gráfico
         const top5Workshops = formatandoWorkshops
           .map((w) => ({
             ...w,
@@ -97,6 +87,18 @@ export function DashboardPage() {
           data: top5Workshops,
           total: totalParticipantesGrafico,
         });
+
+        const recentWorkshopsData = [...workshops]
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, 5)
+          .map((workshop) => ({
+            id: workshop.id,
+            name: workshop.name || workshop.nome,
+            date: workshop.date,
+            participants: workshop.totalParticipants || 0,
+          }));
+
+        setRecentWorkshops(recentWorkshopsData);
       } catch (error) {
         console.error("Erro ao carregar os dados da Dashboard:", error);
       } finally {
@@ -109,7 +111,6 @@ export function DashboardPage() {
 
   return (
     <div className="w-full animate-in fade-in duration-500 pb-8 font-['Inter'] flex flex-col gap-6">
-      {/* Cabeçalho */}
       <div>
         <h1 className="text-white text-2xl font-bold">Visão Geral</h1>
         <p className="text-[#7a88a4] text-sm mt-1">
@@ -123,7 +124,6 @@ export function DashboardPage() {
         </div>
       ) : (
         <>
-          {/* Seção 1: Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StatCard
               title="Total de Colaboradores"
@@ -144,7 +144,6 @@ export function DashboardPage() {
             />
           </div>
 
-          {/* Seção 2: Gráficos */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <TopContributorsChart data={topContributors} />
             <WorkshopsDistributionChart
@@ -152,6 +151,8 @@ export function DashboardPage() {
               total={workshopDist.total}
             />
           </div>
+
+          <RecentWorkshopsTable workshops={recentWorkshops} />
         </>
       )}
     </div>

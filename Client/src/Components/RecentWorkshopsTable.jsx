@@ -14,7 +14,6 @@ function formatDate(value) {
 }
 
 export function RecentWorkshopsTable({ workshops = [] }) {
-
   return (
     <div className="bg-[#161c2a] rounded-xl p-6 w-full font-['Inter'] shadow-sm">
       <div className="flex items-center justify-between mb-6">
@@ -59,34 +58,34 @@ export function RecentWorkshopsTable({ workshops = [] }) {
               </tr>
             ) : (
               workshops.map((workshop) => (
-              <tr
-                key={workshop.id}
-                className="border-b border-[#252f45] last:border-0 hover:bg-[#1a2540]/30 transition-colors duration-200"
-              >
-                <td className="py-4 text-white text-sm font-medium">
-                  {workshop.name}
-                </td>
+                <tr
+                  key={workshop.id}
+                  className="border-b border-[#252f45] last:border-0 hover:bg-[#1a2540]/30 transition-colors duration-200"
+                >
+                  <td className="py-4 text-white text-sm font-medium">
+                    {workshop.name}
+                  </td>
 
-                <td className="py-4 text-[#7a88a4] text-sm">
-                  {formatDate(workshop.date)}
-                </td>
+                  <td className="py-4 text-[#7a88a4] text-sm">
+                    {formatDate(workshop.date)}
+                  </td>
 
-                <td className="py-4">
-                  <span className="bg-[#1a2540] text-[#4d8aff] text-xs font-medium px-2.5 py-1 rounded-full">
-                    {workshop.participants} presentes
-                  </span>
-                </td>
+                  <td className="py-4">
+                    <span className="bg-[#1a2540] text-[#4d8aff] text-xs font-medium px-2.5 py-1 rounded-full">
+                      {workshop.participants} presentes
+                    </span>
+                  </td>
 
-                <td className="py-4 text-right">
-                  <Link
-                    to={`/workshops/${workshop.id}`}
-                    className="inline-flex items-center gap-1.5 bg-[#1a2540] hover:bg-[#d4e0ff] text-[#4d8aff] hover:text-[#1a2540] text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors duration-200"
-                  >
-                    <Eye size={14} strokeWidth={2.5} />
-                    Ver detalhes
-                  </Link>
-                </td>
-              </tr>
+                  <td className="py-4 text-right">
+                    <Link
+                      to={`/workshops/${workshop.id}`}
+                      className="inline-flex items-center gap-1.5 bg-[#1a2540] hover:bg-[#d4e0ff] text-[#4d8aff] hover:text-[#1a2540] text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors duration-200"
+                    >
+                      <Eye size={14} strokeWidth={2.5} />
+                      Ver detalhes
+                    </Link>
+                  </td>
+                </tr>
               ))
             )}
           </tbody>
