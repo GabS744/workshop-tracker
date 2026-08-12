@@ -1,34 +1,19 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Eye } from "lucide-react";
 
-export function RecentWorkshopsTable() {
-  const workshops = [
-    {
-      id: 1,
-      name: "Testes Automatizados com xUnit",
-      date: "13/03/2025",
-      participants: 4,
-    },
-    {
-      id: 2,
-      name: "Segurança em APIs REST",
-      date: "12/12/2024",
-      participants: 8,
-    },
-    {
-      id: 3,
-      name: "React 19 e Server Components",
-      date: "12/09/2024",
-      participants: 5,
-    },
-    {
-      id: 4,
-      name: "Introdução ao Docker",
-      date: "13/06/2024",
-      participants: 5,
-    },
-    { id: 5, name: "Clean Code com C#", date: "14/03/2024", participants: 6 },
-  ];
+function formatDate(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return String(value).split("T")[0] || "";
+  }
+
+  return date.toLocaleDateString("pt-BR");
+}
+
+export function RecentWorkshopsTable({ workshops = [] }) {
 
   return (
     <div className="bg-[#161c2a] rounded-xl p-6 w-full font-['Inter'] shadow-sm">
@@ -63,18 +48,28 @@ export function RecentWorkshopsTable() {
             </tr>
           </thead>
           <tbody>
-            {workshops.map((workshop) => (
+            {workshops.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="py-8 text-center text-[#7a88a4] text-sm"
+                >
+                  Nenhum workshop recente encontrado.
+                </td>
+              </tr>
+            ) : (
+              workshops.map((workshop) => (
               <tr
                 key={workshop.id}
                 className="border-b border-[#252f45] last:border-0 hover:bg-[#1a2540]/30 transition-colors duration-200"
               >
-                {/* Nome */}
                 <td className="py-4 text-white text-sm font-medium">
                   {workshop.name}
                 </td>
 
-                {/* Data */}
-                <td className="py-4 text-[#7a88a4] text-sm">{workshop.date}</td>
+                <td className="py-4 text-[#7a88a4] text-sm">
+                  {formatDate(workshop.date)}
+                </td>
 
                 <td className="py-4">
                   <span className="bg-[#1a2540] text-[#4d8aff] text-xs font-medium px-2.5 py-1 rounded-full">
@@ -92,7 +87,8 @@ export function RecentWorkshopsTable() {
                   </Link>
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
       </div>

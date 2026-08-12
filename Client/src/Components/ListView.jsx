@@ -8,6 +8,8 @@ export function ListView({
   searchValue = "",
   onSearchChange,
   searchLoading = false,
+  filterValues = {},
+  onFilterChange,
   onAddClick,
   onEditClick,
   onDeleteClick,
@@ -84,6 +86,8 @@ export function ListView({
 
             <input
               type="date"
+              value={filterValues.dataInicio ?? ""}
+              onChange={(e) => onFilterChange?.("dataInicio", e.target.value)}
               className="w-full bg-[#161c2a] border border-[#252f45] text-[#7a88a4] text-sm rounded-lg focus:ring-1 focus:ring-[#5c6dff] focus:border-[#5c6dff] block p-2.5 outline-none transition-all [&::-webkit-calendar-picker-indicator]:invert-[0.6]"
             />
           </div>
@@ -95,6 +99,8 @@ export function ListView({
 
             <input
               type="date"
+              value={filterValues.dataFim ?? ""}
+              onChange={(e) => onFilterChange?.("dataFim", e.target.value)}
               className="w-full bg-[#161c2a] border border-[#252f45] text-[#7a88a4] text-sm rounded-lg focus:ring-1 focus:ring-[#5c6dff] focus:border-[#5c6dff] block p-2.5 outline-none transition-all [&::-webkit-calendar-picker-indicator]:invert-[0.6]"
             />
           </div>
@@ -107,6 +113,8 @@ export function ListView({
             <input
               type="number"
               placeholder="Ex: 3"
+              value={filterValues.minParticipantes ?? ""}
+              onChange={(e) => onFilterChange?.("minParticipantes", e.target.value)}
               className="w-full bg-[#161c2a] border border-[#252f45] text-white text-sm rounded-lg focus:ring-1 focus:ring-[#5c6dff] focus:border-[#5c6dff] block p-2.5 outline-none transition-all placeholder-[#7a88a4]"
             />
           </div>
@@ -119,6 +127,8 @@ export function ListView({
             <input
               type="number"
               placeholder="Ex: 8"
+              value={filterValues.maxParticipantes ?? ""}
+              onChange={(e) => onFilterChange?.("maxParticipantes", e.target.value)}
               className="w-full bg-[#161c2a] border border-[#252f45] text-white text-sm rounded-lg focus:ring-1 focus:ring-[#5c6dff] focus:border-[#5c6dff] block p-2.5 outline-none transition-all placeholder-[#7a88a4]"
             />
           </div>
