@@ -1,19 +1,15 @@
-import { Routes, Route } from "react-router-dom";
-
-import { DashboardPage } from "./Pages/DashboardPage";
-import { ContributorsPage } from "./Pages/ContributorsPage";
-import { WorkshopsPage } from "./Pages/WorkshopsPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { DefaultLayout } from "./Components/DefaultLayout";
+import { DashboardPage } from "./Pages/DashboardPage";
 
-function App() {
+export function App() {
   return (
-    <Routes>
-      <Route path="/" element={<DefaultLayout />} />
-      <Route index element={<DashboardPage />} />
-      <Route path="/contributors" element={<ContributorsPage />} />
-      <Route path="/workshops" element={<WorkshopsPage />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<DefaultLayout />}>
+          <Route index element={<DashboardPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
